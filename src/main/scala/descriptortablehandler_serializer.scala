@@ -169,7 +169,7 @@ class SerDescriptorTableHandler()(implicit p: Parameters) extends Module
       when (hasbits_request_meta_Q.io.enq.ready && busy_toplevel && io.l2helperUser1.req.ready) {
         hasBitsLoaderState := s_hasBitsLoader_HasBitsLoad
         ProtoaccLogger.logInfo("[serdescriptor] dispatch is_submessage load, relfieldno %d, arrayindex %d, reqaddr 0x%x\n",
-          Wire(current_has_bits_next_bitoffset),
+          Wire(current_has_bits_next_bitoffset.cloneType),
           hasbits_array_index,
           is_submessage_request_address)
       }
@@ -181,7 +181,7 @@ class SerDescriptorTableHandler()(implicit p: Parameters) extends Module
       when (io.l2helperUser1.req.ready) {
         hasBitsLoaderState := s_hasBitsLoader_WaitToAdvance
         ProtoaccLogger.logInfo("[serdescriptor] dispatch hasbits load, relfieldno %d, arrayindex %d, reqaddr 0x%x\n",
-          Wire(current_has_bits_next_bitoffset),
+          Wire(current_has_bits_next_bitoffset.cloneType),
           hasbits_array_index,
           hasbits_request_address)
       }

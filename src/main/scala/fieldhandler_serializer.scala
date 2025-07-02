@@ -178,14 +178,14 @@ class SerFieldHandler(logPrefix: String)(implicit p: Parameters) extends Module
         src_data_addr_reg := io.ops_in.bits.src_data_addr
 
         ProtoaccLogger.logInfo(logPrefix + " S_WAIT_CMD: accept op: src_data_addr 0x%x, src_data_type %d, is_repeated 0x%x, is_packed 0x%x, field_number %d, wire_type %d, cpp_size_log2 %d, is_varint_signed %d\n",
-          Wire(io.ops_in.bits.src_data_addr),
-          Wire(io.ops_in.bits.src_data_type),
-          Wire(is_repeated),
-          Wire(is_packed),
-          Wire(io.ops_in.bits.field_number),
-          Wire(wire_type),
-          Wire(cpp_size_log2),
-          Wire(is_varint_signed)
+          Wire(io.ops_in.bits.src_data_addr.cloneType),
+          Wire(io.ops_in.bits.src_data_type.cloneType),
+          Wire(is_repeated.cloneType),
+          Wire(is_packed.cloneType),
+          Wire(io.ops_in.bits.field_number.cloneType),
+          Wire(wire_type.cloneType),
+          Wire(cpp_size_log2.cloneType),
+          Wire(is_varint_signed.cloneType)
         )
 
 
