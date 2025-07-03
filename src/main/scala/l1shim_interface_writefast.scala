@@ -58,6 +58,8 @@ class L1MemHelperWriteFastModule(outer: L1MemHelperWriteFast, printInfo: String 
   tlb.io.req.bits.size := request_input.bits.size
   tlb.io.req.bits.cmd := request_input.bits.cmd
   tlb.io.req.bits.passthrough := false.B
+  tlb.io.req.bits.prv := 0.U
+  tlb.io.req.bits.v := false.B
   val tlb_ready = tlb.io.req.ready && !tlb.io.resp.miss
 
   io.ptw <> tlb.io.ptw
@@ -67,12 +69,15 @@ class L1MemHelperWriteFastModule(outer: L1MemHelperWriteFast, printInfo: String 
   tlb.io.sfence.bits.rs2 := false.B
   tlb.io.sfence.bits.addr := 0.U
   tlb.io.sfence.bits.asid := 0.U
+  tlb.io.sfence.bits.hv := false.B
+  tlb.io.sfence.bits.hg := false.B
   tlb.io.kill := false.B
 
   val tags_for_issue_Q = Module(new Queue(UInt(outer.tlTagBits.W), outer.numOutstandingRequestsAllowed + 4))
   tags_for_issue_Q.io.enq.valid := false.B
 
   val tags_init_reg = RegInit(0.U((outer.tlTagBits+1).W))
+  tags_for_issue_Q.io.enq.bits := 0.U
   when (tags_init_reg =/= (outer.numOutstandingRequestsAllowed).U) {
     tags_for_issue_Q.io.enq.bits := tags_init_reg
     tags_for_issue_Q.io.enq.valid := true.B

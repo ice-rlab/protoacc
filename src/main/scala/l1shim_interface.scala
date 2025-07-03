@@ -87,6 +87,8 @@ class L1MemHelperModule(outer: L1MemHelper, printInfo: String = "", queueRequest
   }
 
   val tlb = Module(new TLB(false, log2Ceil(coreDataBytes), p(ProtoTLB).get)(edge, p))
+  tlb.io.req.bits.prv := 0.U
+  tlb.io.req.bits.v := false.B
   tlb.io.req.valid := request_input.valid
   tlb.io.req.bits.vaddr := request_input.bits.addr
   tlb.io.req.bits.size := request_input.bits.size
@@ -97,12 +99,13 @@ class L1MemHelperModule(outer: L1MemHelper, printInfo: String = "", queueRequest
   io.ptw <> tlb.io.ptw
   tlb.io.ptw.status := status
   tlb.io.sfence.valid := io.sfence
+  tlb.io.sfence.bits.hv := false.B
+  tlb.io.sfence.bits.hg := false.B
   tlb.io.sfence.bits.rs1 := false.B
   tlb.io.sfence.bits.rs2 := false.B
   tlb.io.sfence.bits.addr := 0.U
   tlb.io.sfence.bits.asid := 0.U
   tlb.io.kill := false.B
-
 
   val outstanding_req_addr = Module(new Queue(new L1InternalTracking, outer.numOutstandingRequestsAllowed * 4))
 
@@ -111,6 +114,7 @@ class L1MemHelperModule(outer: L1MemHelper, printInfo: String = "", queueRequest
   tags_for_issue_Q.io.enq.valid := false.B
 
   val tags_init_reg = RegInit(0.U((outer.tlTagBits+1).W))
+  tags_for_issue_Q.io.enq.bits := 0.U
   when (tags_init_reg =/= (outer.numOutstandingRequestsAllowed).U) {
     tags_for_issue_Q.io.enq.bits := tags_init_reg
     tags_for_issue_Q.io.enq.valid := true.B

@@ -44,6 +44,7 @@ class SerMemwriter()(implicit p: Parameters) extends Module
 
   write_inject_Q.io.enq.valid := writes_input_IF_Q.io.deq.valid
   writes_input_IF_Q.io.deq.ready := write_inject_Q.io.enq.ready
+  write_inject_Q.io.enq.bits.data
 
   when (writes_input_IF_Q.io.deq.bits.depth > depth) {
       when (writes_input_IF_Q.io.deq.bits.end_of_message) {
@@ -137,6 +138,9 @@ class SerMemwriter()(implicit p: Parameters) extends Module
   val len_to_write = write_inject_Q.io.deq.bits.validbytes
 
   for ( queueno <- 0 until NUM_QUEUES ) {
+    mem_resp_queues(queueno).enq.bits := 0.U
+  }
+  for ( queueno <- 0 until NUM_QUEUES ) {
     mem_resp_queues((write_start_index +& queueno.U) % NUM_QUEUES.U).enq.bits := write_inject_Q.io.deq.bits.data >> ((len_to_write - (queueno+1).U) << 3)
   }
 
@@ -194,7 +198,9 @@ class SerMemwriter()(implicit p: Parameters) extends Module
   val remapVecValids = Wire(Vec(NUM_QUEUES, Bool()))
   val remapVecReadys = Wire(Vec(NUM_QUEUES, Bool()))
 
-
+  for (queueno <- 0 until NUM_QUEUES) {
+    mem_resp_queues(queueno).deq.ready := false.B
+  }
   for (queueno <- 0 until NUM_QUEUES) {
     val remapindex = (queueno.U +& read_start_index) % NUM_QUEUES.U
     remapVecData(queueno) := mem_resp_queues(remapindex).deq.bits

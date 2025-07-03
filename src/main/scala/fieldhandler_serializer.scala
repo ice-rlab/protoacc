@@ -34,9 +34,17 @@ class SerFieldHandler(logPrefix: String)(implicit p: Parameters) extends Module
   val outputQ = Module(new Queue(new WriterBundle, 4))
   io.writer_output <> outputQ.io.deq
   outputQ.io.enq.valid := false.B
+  outputQ.io.enq.bits.data := 0.U
+  outputQ.io.enq.bits.last_for_arbitration_round := false.B
+  outputQ.io.enq.bits.validbytes := 0.U
+  outputQ.io.enq.bits.depth := 0.U
+  outputQ.io.enq.bits.end_of_message := false.B
 
   io.memread.req.valid := false.B
   io.memread.req.bits.cmd := M_XRD
+  io.memread.req.bits.addr := 0.U
+  io.memread.req.bits.size := 0.U
+  io.memread.req.bits.data := 0.U
   io.memread.resp.ready := false.B
   io.ops_in.ready := false.B
 
@@ -177,16 +185,16 @@ class SerFieldHandler(logPrefix: String)(implicit p: Parameters) extends Module
 
         src_data_addr_reg := io.ops_in.bits.src_data_addr
 
-        ProtoaccLogger.logInfo(logPrefix + " S_WAIT_CMD: accept op: src_data_addr 0x%x, src_data_type %d, is_repeated 0x%x, is_packed 0x%x, field_number %d, wire_type %d, cpp_size_log2 %d, is_varint_signed %d\n",
-          Wire(io.ops_in.bits.src_data_addr.cloneType),
-          Wire(io.ops_in.bits.src_data_type.cloneType),
-          Wire(is_repeated.cloneType),
-          Wire(is_packed.cloneType),
-          Wire(io.ops_in.bits.field_number.cloneType),
-          Wire(wire_type.cloneType),
-          Wire(cpp_size_log2.cloneType),
-          Wire(is_varint_signed.cloneType)
-        )
+        //ProtoaccLogger.logInfo(logPrefix + " S_WAIT_CMD: accept op: src_data_addr 0x%x, src_data_type %d, is_repeated 0x%x, is_packed 0x%x, field_number %d, wire_type %d, cpp_size_log2 %d, is_varint_signed %d\n",
+        //  Wire(io.ops_in.bits.src_data_addr.cloneType),
+        //  Wire(io.ops_in.bits.src_data_type.cloneType),
+        //  Wire(is_repeated.cloneType),
+        //  Wire(is_packed.cloneType),
+        //  Wire(io.ops_in.bits.field_number.cloneType),
+        //  Wire(wire_type.cloneType),
+        //  Wire(cpp_size_log2.cloneType),
+        //  Wire(is_varint_signed.cloneType)
+        //)
 
 
         when (detailedTypeIsPotentiallyScalar && !is_repeated) {
