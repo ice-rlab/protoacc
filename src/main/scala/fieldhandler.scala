@@ -661,7 +661,7 @@ class FieldHandler()(implicit p: Parameters) extends Module {
           val consume_4bytes = type_tracker === PROTO_TYPES.TYPE_FLOAT ||
                                type_tracker === PROTO_TYPES.TYPE_FIXED32
 
-          val consume_width = Wire(0.U(4.W))
+          val consume_width = WireDefault(0.U(4.W))
           when (consume_varint) {
             io.consumer.user_consumed_bytes := varintlen
             consume_width := varintlen
@@ -689,7 +689,7 @@ class FieldHandler()(implicit p: Parameters) extends Module {
           val write_1bytes = type_tracker === PROTO_TYPES.TYPE_BOOL
 
 
-          val write_width = Wire(0.U(4.W))
+          val write_width = WireDefault(0.U(4.W))
           when (write_8bytes) {
             io.fixed_writer_request.bits.write_width := 3.U
             write_width := 8.U
