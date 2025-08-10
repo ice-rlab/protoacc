@@ -150,6 +150,10 @@ class MemLoader()(implicit p: Parameters) extends Module
   val memresp_bits_shifted = io.l1helperUser.resp.bits.data >> align_shamt
 
   for ( queueno <- 0 until NUM_QUEUES ) {
+    mem_resp_queues(queueno).enq.bits := 0.U
+    mem_resp_queues(queueno).deq.ready := false.B
+  }
+  for ( queueno <- 0 until NUM_QUEUES ) {
     mem_resp_queues((write_start_index +& queueno.U) % NUM_QUEUES.U).enq.bits := memresp_bits_shifted >> (queueno * 8)
   }
 

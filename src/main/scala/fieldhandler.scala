@@ -229,6 +229,8 @@ class FieldHandler()(implicit p: Parameters) extends Module {
 
   val hasbitswriter = Module(new HasBitsWriter)
   io.l1helperUser2 <> hasbitswriter.io.l1helperUser
+  hasbitswriter.io.requestin.bits.hasbits_base_addr := 0.U
+  hasbitswriter.io.requestin.bits.relative_fieldno := 0.U
   hasbitswriter.io.requestin.valid := false.B
   hasbitswriter.io.requestin.bits.flushonly := false.B
 
