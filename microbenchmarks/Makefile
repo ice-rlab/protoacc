@@ -10,14 +10,15 @@ RVCPP = riscv64-unknown-linux-gnu-g++
 RVSTRIP = riscv64-unknown-linux-gnu-strip
 X86CPP = $(HOST_GCC_INSTALL)/bin/g++
 X86STRIP = strip
-CPPFLAGS = -std=c++11 -O3 -g3 -static -D NDEBUG
+# CPPFLAGS = -std=c++11 -O3 -g3 -static -D NDEBUG
+CPPFLAGS = -std=c++11 -g -static
 
 include testsfrag.mk
 
 ACCELCPP = accellib.cpp
 ACCELH = rocc.h accellib.h
 
-all: $(rvtests) $(x86tests)
+all: $(x86tests) $(rvtests)
 
 %.pb.cc %.pb.h: %.proto
 	LD_LIBRARY_PATH=$(HOST_GCC_INSTALL)/lib64:$$LD_LIBRARY_PATH && $(PROTOC) --proto_path=$(@D) --cpp_out=. $<
@@ -26,11 +27,20 @@ all: $(rvtests) $(x86tests)
 
 %.riscv: %.cpp $(protos) $(ACCELCPP) $(ACCELH)
 	$(RVCPP) $(CPPFLAGS) $< $(protocc) $(ACCELCPP) -I $(RISCVINSTALLDIR)/include -pthread $(RISCVINSTALLDIR)/lib/libprotobuf.a -o $@
-	$(RVSTRIP) $@
+
+# %.riscv: %.cpp $(protos) $(ACCELCPP) $(ACCELH)
+# 	$(RVCPP) $(CPPFLAGS) $< $(protocc) $(ACCELCPP) -I $(RISCVINSTALLDIR)/include -pthread $(RISCVINSTALLDIR)/lib/libprotobuf.a -o $@
+# 	$(RVSTRIP) $@
+
+# %.x86 : %.cpp $(protos)
+# 	$(X86CPP) $(CPPFLAGS) $< $(protocc) -I $(X86INSTALLDIR)/include -pthread $(X86INSTALLDIR)/lib/libprotobuf.a -o $@
+# 	$(X86STRIP) $@
 
 %.x86 : %.cpp $(protos)
 	$(X86CPP) $(CPPFLAGS) $< $(protocc) -I $(X86INSTALLDIR)/include -pthread $(X86INSTALLDIR)/lib/libprotobuf.a -o $@
-	$(X86STRIP) $@
+
+clean:
+	cd primitive-tests/ && rm -rf *.riscv *.x86 *.o *.dump
 
 .PRECIOUS: %.pb.cc %.pb.h
 
