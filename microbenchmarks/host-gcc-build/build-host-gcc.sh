@@ -8,7 +8,7 @@ usage() {
 	echo ""
 	echo "Options"
 	echo "--help -h                                    : Display this message."
-	echo "--gcc-version <valid gcc version i.e. 11.4.0> : GCC version to build from source."
+	echo "--gcc-version <valid gcc version i.e. 9.2.0> : GCC version to build from source."
 
 	exit "$1"
 }
