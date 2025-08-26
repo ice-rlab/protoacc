@@ -1,8 +1,32 @@
 #!/usr/bin/env bash
 
+# exit-on-error
 set -e
 
-VERSION="gcc-9.2.0"
+usage() {
+    echo "Usage: ${0} [OPTIONS]"
+	echo ""
+	echo "Options"
+	echo "--help -h                                    : Display this message."
+	echo "--gcc-version <valid gcc version i.e. 11.4.0> : GCC version to build from source."
+
+	exit "$1"
+}
+
+while [ "$1" != "" ];
+do
+    case $1 in
+		-h | --help )
+		    usage 1 ;;
+		--gcc-version )
+		    shift
+		    VERSION="gcc-$1" ;;
+		* )
+		    echo "Invalid option $1"
+			usage 0 ;;
+    esac
+	shift
+done
 
 wget https://ftp.gnu.org/gnu/gcc/$VERSION/$VERSION.tar.gz
 
