@@ -1,6 +1,7 @@
 #include "accellib.h"
 #include <cassert>
 #include <malloc.h>
+#include <cstdint>
 
 #define PAGESIZE_BYTES 4096
 
